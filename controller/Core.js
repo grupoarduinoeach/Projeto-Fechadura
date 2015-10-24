@@ -1,6 +1,8 @@
 //Modulos
 var com = require("serialport");
 var readline = require('readline');
+var fs = require('fs');
+
 
 //Configuracoes
 var rl = readline.createInterface({
@@ -17,6 +19,7 @@ var serialPort = new com.SerialPort("/dev/tty.usbmodem1421", {
 
 //Eventos da Porta Serial
 serialPort.on('open',function() {
+    iniciaNovoArquivoDeDados();
     console.log('Conectado :)');
 });
 
@@ -50,13 +53,53 @@ function verifica(numeroEnviadoPeloArduino){
             //Sinal para abrir portao.            
             serialPort.write("S"); //byte = 83
             console.log("Portao foi aberto!\n");
+            addLog("ID:" + numeroEnviadoPeloArduino + " Acesso Permitido!");
 
-        }else 
+        }else{
             console.log("Permissao Negada!\n");
+            addLog("ID:" + numeroEnviadoPeloArduino + " Acesso Negado!");
+        } 
+            
+
             
         serialPort.resume();
         serialPort.flush();
     });
+}
 
+
+//funcao apaga o conteudo do arquivo ou cria se não existe
+function iniciaNovoArquivoDeDados(){
+    fs.writeFile(__dirname + "/../resources/dados/Log.out", "", function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        console.log("Arquivo alvo!");
+    }); 
+}
+
+
+function addLog(conteudo){
+    var msg = conteudo + "  " + getTimeStamp() + "\n";
+    fs.appendFile(__dirname + "/../resources/dados/Log.out", msg, function (err) {
+        if(err){
+            return console.log(err);
+        }
+        console.log(conteudo);
+    });
+}
+
+function getTimeStamp() {
+    var now = new Date();
+    return ((now.getDate()) + '/' +
+            (now.getMonth() + 1) + '/' +
+             now.getFullYear() + " " +
+             now.getHours() + ':' +
+             ((now.getMinutes() < 10)
+                 ? ("0" + now.getMinutes())
+                 : (now.getMinutes())) + ':' +
+             ((now.getSeconds() < 10)
+                 ? ("0" + now.getSeconds())
+                 : (now.getSeconds())));
 }
 
