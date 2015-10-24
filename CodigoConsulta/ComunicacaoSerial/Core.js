@@ -43,8 +43,13 @@ var serialPort = new com.SerialPort("/dev/tty.usbmodem1421", {
 */
 
 
+
 serialPort.on('open',function() {
-  console.log('Port open');
+    console.log('Port open');
+    serialPort.write("S");
+
+
+
 });
 
 serialPort.on('data', function(data) {
