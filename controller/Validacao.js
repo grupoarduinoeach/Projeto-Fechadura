@@ -12,7 +12,28 @@ var rl = readline.createInterface({
 //metodos para exportar
 module.exports = {
     //Valida o numero de acordo com algum parametro
-    verifica: function (numeroEnviadoPeloArduino, serialPort){
+    verifica: function (numeroEnviadoPeloArduino, serialPort, vetor){
+        serialPort.pause();    
+
+        for(var i = 0; i<vetor.length;i++){
+            console.log(vetor[i]  + "e" + numeroEnviadoPeloArduino);
+
+            if(numeroEnviadoPeloArduino == vetor[i]){
+                serialPort.write("S"); //byte = 83
+                addLog("ID:" + numeroEnviadoPeloArduino + " Acesso Aceito!");
+
+                serialPort.flush();
+                serialPort.resume();
+                return;
+            }
+        }
+        serialPort.write("N");
+        addLog("ID:" + numeroEnviadoPeloArduino + " Acesso Negado!");
+
+        serialPort.flush();
+        serialPort.resume();
+
+/*
         rl.question(numeroEnviadoPeloArduino + " é valido? (Y/N)\n", function(answer) {
             if(answer == "Y"){
                 //Sinal para abrir portao.            
@@ -21,12 +42,15 @@ module.exports = {
                 addLog("ID:" + numeroEnviadoPeloArduino + " Acesso Permitido!");
 
             }else{
+                serialPort.write("N");
+
                 console.log("Permissao Negada!\n");
                 addLog("ID:" + numeroEnviadoPeloArduino + " Acesso Negado!");
             } 
             serialPort.flush();
             serialPort.resume();
         });
+*/
     },
 
     //Fecha o processo que faz a leitura das linhas

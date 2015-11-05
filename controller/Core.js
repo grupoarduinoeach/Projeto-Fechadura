@@ -5,10 +5,10 @@ var path = require('path'); //Seguranca com acesso a arquivos
 var validacao = require('./Validacao');
 var fs = require('fs');
 
-
+var cartoesValidos = ['9377504', '9277576'];
 
 //Configuracoes
-var serialPort = new com.SerialPort("/dev/tty.usbmodem1421", {
+var serialPort = new com.SerialPort("/dev/ttyACM1", {
     baudrate: 115200,
     parser: com.parsers.readline('\r\n')
 });
@@ -47,12 +47,15 @@ serialPort.on('open',function() {
 
 serialPort.on('data', function(data) {
     serialPort.pause();    
-    validacao.verifica(data, serialPort);
+    validacao.verifica(data, serialPort,cartoesValidos);
 });
 
 serialPort.on('close', function(data) {
     validacao.dispose();
 });
+
+
+
 
 
 

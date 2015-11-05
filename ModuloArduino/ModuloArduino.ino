@@ -7,6 +7,10 @@ PN532 nfc(pn532i2c);
 
 int FNblockToRead=0;
 
+const int relePin = 4;
+const int buzzerPin = 8;
+const int ledPin = 6;
+
 
 
 
@@ -18,9 +22,6 @@ void configuraCartao(){
         Serial.print("Didn't find PN53x board");  
         while (1); // halt
     }
-    Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX); 
-    Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
-    Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
     nfc.SAMConfig();
 }
 
@@ -51,7 +52,7 @@ String leCartao(){
             }
         }    
     }
-    return "Error na leitura";  
+    return "NaN";  
 }
 
 
@@ -59,12 +60,41 @@ void setup(void) {
 
   Serial.begin(115200); 
   configuraCartao(); 
+  pinMode(relePin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+  
   
 }
 
 
 void loop(void) {
-    Serial.println(leCartao());
-    delay(1000);
+   bool leuCartao = false;
+    String a = leCartao();
+    if(a!="NaN"){
+      Serial.flush();
+      Serial.println(a);
+      leuCartao = true;
+      delay(200);
+    }
+    while(leuCartao){
+        if (Serial.available() > 0) {
+      
+        int dados = Serial.read();
+        if(dados == 'S'){
+          digitalWrite(relePin, HIGH);  
+          delay(1000);      
+          digitalWrite(relePin, LOW);
+        }else{
+          digitalWrite(buzzerPin, HIGH);  
+          digitalWrite(ledPin, HIGH);  
+          delay(1000);      
+          digitalWrite(ledPin, LOW);  
+          digitalWrite(buzzerPin, LOW);
+          
+        }
+        leuCartao = false;
+      }
+    }
+    
 }
 
