@@ -3,11 +3,13 @@ var com = require('serialport');
 var express = require('express'); //FrameWork geral para http requests
 var path = require('path'); //Seguranca com acesso a arquivos
 var validacao = require('./Validacao');
+var fs = require('fs');
+
 
 
 //Configuracoes
 var serialPort = new com.SerialPort("/dev/tty.usbmodem1421", {
-    baudrate: 9600,
+    baudrate: 115200,
     parser: com.parsers.readline('\r\n')
 });
 

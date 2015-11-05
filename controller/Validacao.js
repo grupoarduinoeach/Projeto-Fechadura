@@ -24,9 +24,8 @@ module.exports = {
                 console.log("Permissao Negada!\n");
                 addLog("ID:" + numeroEnviadoPeloArduino + " Acesso Negado!");
             } 
-       
-            serialPort.resume();
             serialPort.flush();
+            serialPort.resume();
         });
     },
 
